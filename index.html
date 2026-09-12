@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tailored — fit your resume to the job</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#22252A;
+    --ink-soft:#5B5850;
+    --paper:#EFE9DD;
+    --card:#F8F6F0;
+    --line:#DCD3BF;
+    --thread:#A5342E;
+    --thread-dark:#7E241F;
+    --brass:#9C7A2E;
+    --ok:#3F6B4E;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-attachment: fixed;
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .wrap{
+    max-width:720px;
+    margin:0 auto;
+    padding:32px 20px 80px;
+  }
+  header.site{
+    margin-bottom:34px;
+  }
+  .wordmark{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:clamp(30px, 6vw, 40px);
+    letter-spacing:-0.01em;
+    color:var(--ink);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  .wordmark .dot{ color:var(--thread); font-size:0.7em; }
+  .tagline{
+    font-size:15px;
+    color:var(--ink-soft);
+    margin-top:6px;
+    max-width:46ch;
+    line-height:1.5;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px 22px 24px;
+    margin-bottom:22px;
+    position:relative;
+    box-shadow:0 1px 0 rgba(34,37,42,0.02);
+  }
+  .step-row{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  .step-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--brass);
+    border:1px solid var(--brass);
+    border-radius:50%;
+    width:24px;height:24px;
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .step-title{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:19px;
+  }
+  .step-sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:-8px 0 14px 36px;
+    line-height:1.5;
+  }
+  .field-body{
+    margin-left:36px;
+  }
+  .tabs{
+    display:flex;
+    gap:2px;
+    margin-bottom:12px;
+    border-bottom:1px dashed var(--line);
+  }
+  .tab-btn{
+    background:none;
+    border:none;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:13px;
+    padding:8px 4px 10px;
+    margin-right:18px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+    position:relative;
+    top:1px;
+  }
+  .tab-btn.active{
+    color:var(--ink);
+    border-bottom:2px solid var(--thread);
+    font-weight:500;
+  }
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; }
+
+  .dropzone{
+    border:1.5px dashed var(--line);
+    border-radius:var(--radius);
+    padding:22px 16px;
+    text-align:center;
+    cursor:pointer;
+    background:rgba(255,255,255,0.35);
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .dropzone:hover, .dropzone.drag{
+    border-color:var(--thread);
+    background:rgba(165,52,46,0.04);
+  }
+  .dropzone input{ display:none; }
+  .dz-label{ font-size:14px; color:var(--ink); font-weight:500; }
+  .dz-sub{ font-size:12px; color:var(--ink-soft); margin-top:4px; }
+  .file-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:10px;
+    font-size:12.5px;
+    font-family:'IBM Plex Mono', monospace;
+    background:#fff;
+    border:1px solid var(--line);
+    padding:5px 10px;
+    border-radius:2px;
+  }
+  .file-chip button{
+    background:none;border:none;color:var(--thread);cursor:pointer;font-size:13px;padding:0;
+  }
+
+  textarea{
+    width:100%;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    line-height:1.6;
+    color:var(--ink);
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:12px;
+    resize:vertical;
+    min-height:130px;
+  }
+  textarea:focus, input:focus{
+    outline:none;
+    border-color:var(--thread);
+  }
+  .hint{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:6px;
+  }
+
+  .run-row{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    margin:8px 0 30px;
+  }
+  button.primary{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:16px;
+    background:var(--thread);
+    color:#fff;
+    border:none;
+    padding:13px 30px;
+    border-radius:2px;
+    cursor:pointer;
+    letter-spacing:0.01em;
+    transition:background .15s ease, transform .1s ease;
+  }
+  button.primary:hover{ background:var(--thread-dark); }
+  button.primary:active{ transform:translateY(1px); }
+  button.primary:disabled{
+    background:#B9AFA0; cursor:not-allowed;
+  }
+  .run-note{ font-size:12px; color:var(--ink-soft); }
+
+  .error-box{
+    border:1px solid var(--thread);
+    background:#FBEEED;
+    color:var(--thread-dark);
+    padding:12px 14px;
+    border-radius:2px;
+    font-size:13px;
+    margin-bottom:20px;
+    line-height:1.5;
+    display:none;
+  }
+
+  .result-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .view-toggle{
+    display:flex;
+    border:1px solid var(--line);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .view-toggle button{
+    background:#fff;
+    border:none;
+    font-size:12.5px;
+    padding:7px 12px;
+    cursor:pointer;
+    color:var(--ink-soft);
+    font-family:'IBM Plex Sans', sans-serif;
+  }
+  .view-toggle button.active{
+    background:var(--ink);
+    color:#fff;
+  }
+
+  #resultSection{ display:none; }
+
+  .resume-preview{
+    background:#fff;
+    border:1px solid var(--line);
+    padding:38px 34px;
+    font-family:'IBM Plex Sans', sans-serif;
+    color:#1a1a1a;
+    line-height:1.55;
+    box-shadow:0 2px 10px rgba(34,37,42,0.06);
+    min-height:200px;
+  }
+  .resume-preview .rp-name{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:22px;
+    margin-bottom:2px;
+  }
+  .resume-preview .rp-contact{
+    font-size:12px;
+    color:#555;
+    margin-bottom:16px;
+  }
+  .resume-preview h3{
+    font-size:12.5px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--thread-dark);
+    border-bottom:1px solid #ddd;
+    padding-bottom:4px;
+    margin:18px 0 8px;
+  }
+  .resume-preview p{ font-size:13px; margin:4px 0; }
+  .resume-preview ul{ margin:4px 0 10px; padding-left:18px; }
+  .resume-preview li{ font-size:13px; margin:2px 0; }
+
+  .download-row{
+    display:flex;
+    gap:10px;
+    margin-top:16px;
+    flex-wrap:wrap;
+  }
+  button.secondary{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:13px;
+    font-weight:500;
+    background:#fff;
+    border:1px solid var(--ink);
+    color:var(--ink);
+    padding:10px 16px;
+    border-radius:2px;
+    cursor:pointer;
+  }
+  button.secondary:hover{ background:var(--ink); color:#fff; }
+  button.pdf{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:13px;
+    font-weight:600;
+    background:var(--ok);
+    border:1px solid var(--ok);
+    color:#fff;
+    padding:10px 16px;
+    border-radius:2px;
+    cursor:pointer;
+  }
+  button.pdf:hover{ background:#335840; }
+
+  .stitch{
+    border:none;
+    border-top:1px dashed var(--line);
+    margin:30px 0;
+  }
+
+  .spinner{
+    width:16px;height:16px;
+    border:2px solid rgba(255,255,255,0.4);
+    border-top-color:#fff;
+    border-radius:50%;
+    animation:spin .7s linear infinite;
+    display:inline-block;
+    vertical-align:-3px;
+    margin-right:8px;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  footer.foot{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:20px;
+  }
+
+  @media (max-width:480px){
+    .card{ padding:18px 16px 20px; }
+    .field-body{ margin-left:0; }
+    .step-sub{ margin-left:0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="site">
+    <div class="wordmark">Tailored<span class="dot">.</span></div>
+    <div class="tagline">Upload your resume and a job posting. Get back a version cut to fit the role, keyword-matched for ATS, and written like a person wrote it.</div>
+  </header>
+
+  <div class="error-box" id="errorBox"></div>
+
+  <!-- STEP 1: RESUME -->
+  <div class="card">
+    <div class="step-row">
+      <div class="step-num">01</div>
+      <div class="step-title">Your resume</div>
+    </div>
+    <div class="step-sub">Upload a file or paste the text in. Either way, review the extracted text below before you continue.</div>
+    <div class="field-body">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="resume-upload" data-group="resume">Upload file</button>
+        <button class="tab-btn" data-tab="resume-paste" data-group="resume">Paste text</button>
+      </div>
+      <div class="tab-panel active" id="resume-upload" data-group="resume">
+        <label class="dropzone" id="resumeDropzone">
+          <input type="file" id="resumeFile" accept=".txt,.docx,.pdf" />
+          <div class="dz-label">Click to choose a file, or drop it here</div>
+          <div class="dz-sub">.pdf, .docx, or .txt</div>
+        </label>
+        <div id="resumeFileChip"></div>
+      </div>
+      <div class="tab-panel" id="resume-paste" data-group="resume">
+        <textarea id="resumePasteBox" placeholder="Paste your resume text here..."></textarea>
+      </div>
+      <div class="hint">Extracted / final text (edit anything that came through wrong):</div>
+      <textarea id="resumeText" placeholder="Extracted resume text will appear here..." style="min-height:160px; margin-top:6px;"></textarea>
+    </div>
+  </div>
+
+  <!-- STEP 2: JOB DESCRIPTION -->
+  <div class="card">
+    <div class="step-row">
+      <div class="step-num">02</div>
+      <div class="step-title">The job posting</div>
+    </div>
+    <div class="step-sub">Paste the full job description, including the requirements and preferred qualifications.</div>
+    <div class="field-body">
+      <textarea id="jdText" placeholder="Paste the job description here..." style="min-height:160px;"></textarea>
+    </div>
+  </div>
+
+  <div class="run-row">
+    <button class="primary" id="runBtn">Tailor my resume</button>
+    <div class="run-note" id="runNote">Nothing is invented. Only what's already in your resume gets reorganized and rewritten to fit.</div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultSection">
+    <hr class="stitch" />
+    <div class="card">
+      <div class="step-row">
+        <div class="step-num">03</div>
+        <div class="step-title">Your tailored resume</div>
+      </div>
+      <div class="field-body">
+        <div class="result-header">
+          <div class="view-toggle">
+            <button id="viewPreviewBtn" class="active">Preview</button>
+            <button id="viewEditBtn">Edit text</button>
+          </div>
+        </div>
+
+        <div id="previewWrap">
+          <div class="resume-preview" id="resumePreview"></div>
+        </div>
+        <div id="editWrap" style="display:none;">
+          <textarea id="resultText" style="min-height:360px;"></textarea>
+          <div class="hint">Editing this updates the preview and the PDF you download.</div>
+        </div>
+
+        <div class="download-row">
+          <button class="pdf" id="downloadPdfBtn">Download as PDF</button>
+          <button class="secondary" id="copyBtn">Copy text</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="foot">Your resume and the job description are sent only to generate this result. Nothing is stored.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+  const $ = (id) => document.getElementById(id);
+  const errorBox = $("errorBox");
+
+  function showError(msg){
+    errorBox.textContent = msg;
+    errorBox.style.display = "block";
+    errorBox.scrollIntoView({behavior:"smooth", block:"center"});
+  }
+  function clearError(){
+    errorBox.style.display = "none";
+    errorBox.textContent = "";
+  }
+
+  // ---- Tabs (resume upload vs paste) ----
+  document.querySelectorAll(".tab-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const group = btn.dataset.group;
+      document.querySelectorAll(`.tab-btn[data-group="${group}"]`).forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      document.querySelectorAll(`.tab-panel[data-group="${group}"]`).forEach(p=>p.classList.remove("active"));
+      $(btn.dataset.tab).classList.add("active");
+    });
+  });
+
+  // ---- File extraction ----
+  const resumeFileInput = $("resumeFile");
+  const resumeDropzone = $("resumeDropzone");
+  const resumeFileChip = $("resumeFileChip");
+  const resumeTextBox = $("resumeText");
+  const resumePasteBox = $("resumePasteBox");
+
+  resumeDropzone.addEventListener("dragover", (e)=>{ e.preventDefault(); resumeDropzone.classList.add("drag"); });
+  resumeDropzone.addEventListener("dragleave", ()=> resumeDropzone.classList.remove("drag"));
+  resumeDropzone.addEventListener("drop", (e)=>{
+    e.preventDefault();
+    resumeDropzone.classList.remove("drag");
+    if (e.dataTransfer.files.length){
+      resumeFileInput.files = e.dataTransfer.files;
+      handleResumeFile(e.dataTransfer.files[0]);
+    }
+  });
+  resumeFileInput.addEventListener("change", (e)=>{
+    if (e.target.files.length) handleResumeFile(e.target.files[0]);
+  });
+
+  async function handleResumeFile(file){
+    clearError();
+    resumeFileChip.innerHTML = `<span class="file-chip">${escapeHtml(file.name)} <button id="clearFileBtn" title="Remove">✕</button></span>`;
+    $("clearFileBtn").addEventListener("click", ()=>{
+      resumeFileInput.value = "";
+      resumeFileChip.innerHTML = "";
+      resumeTextBox.value = "";
+    });
+    resumeTextBox.value = "Reading file...";
+    try{
+      const text = await extractText(file);
+      resumeTextBox.value = text.trim();
+    }catch(err){
+      resumeTextBox.value = "";
+      showError(err.message || "Couldn't read that file. Try pasting your resume text instead.");
+    }
+  }
+
+  async function extractText(file){
+    const name = file.name.toLowerCase();
+    if (name.endsWith(".txt")){
+      return await file.text();
+    } else if (name.endsWith(".docx")){
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({arrayBuffer});
+      return result.value;
+    } else if (name.endsWith(".pdf")){
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+      let text = "";
+      for (let i=1;i<=pdf.numPages;i++){
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        text += content.items.map(it=>it.str).join(" ") + "\n";
+      }
+      return text;
+    } else {
+      throw new Error("Unsupported file type. Please upload a .txt, .docx, or .pdf, or paste your resume text instead.");
+    }
+  }
+
+  // paste box mirrors into the working text box
+  resumePasteBox.addEventListener("input", ()=>{
+    resumeTextBox.value = resumePasteBox.value;
+  });
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+
+  // ---- Run tailoring ----
+  const runBtn = $("runBtn");
+  const runNote = $("runNote");
+  const jdText = $("jdText");
+  const resultSection = $("resultSection");
+  const resultText = $("resultText");
+  const resumePreview = $("resumePreview");
+
+  const SYSTEM_PROMPT = `You are an expert resume writer helping a real job seeker tailor their existing resume to one specific job posting.
+
+Rules you must follow exactly:
+1. Only use facts, employers, titles, dates, credentials, and experience that already appear in the original resume. Never invent or exaggerate anything.
+2. Reorganize, re-prioritize, and rewrite the existing content so it lines up with the job description's key requirements and terminology, so it reads well to an ATS keyword scan AND to a human recruiter.
+3. Write in plain, natural, human language, the way a real person describes their own work. No corporate buzzword stuffing, no robotic phrasing, no filler adjectives.
+4. Never use an em dash or en dash as punctuation. Use a period, comma, or the word "and" instead.
+5. Use standard, ATS-friendly section headers only (for example: SUMMARY, EXPERIENCE, SKILLS, EDUCATION, CERTIFICATIONS, PROJECTS, as applicable to what's actually in the resume). No tables, columns, icons, or special characters.
+6. Bullet points under each role should be concise, specific, and led by strong action verbs. Keep numbers and results that were already in the original resume; do not fabricate new metrics.
+7. Keep it roughly one page's worth of content unless the original resume clearly has two pages of real experience.
+8. Output ONLY the finished resume text, plain, ready to paste into a document. Line 1 is the candidate's name. Line 2 is their contact info (phone, email, location, etc, separated by " | "). No preamble, no notes, no explanation of what you changed.`;
+
+  runBtn.addEventListener("click", async ()=>{
+    clearError();
+    const resume = resumeTextBox.value.trim();
+    const jd = jdText.value.trim();
+    if (!resume){ showError("Add your resume first, either by uploading a file or pasting the text in."); return; }
+    if (!jd){ showError("Paste in the job description you're tailoring toward."); return; }
+
+    runBtn.disabled = true;
+    runBtn.innerHTML = `<span class="spinner"></span>Tailoring...`;
+    runNote.textContent = "This usually takes 15 to 30 seconds.";
+
+    try{
+      const out = await tailorResume(resume, jd);
+      resultText.value = out;
+      renderPreview(out);
+      resultSection.style.display = "block";
+      resultSection.scrollIntoView({behavior:"smooth", block:"start"});
+    }catch(err){
+      showError(err.message || "Something went wrong tailoring the resume. Please try again.");
+    }finally{
+      runBtn.disabled = false;
+      runBtn.textContent = "Tailor my resume";
+      runNote.textContent = "Nothing is invented. Only what's already in your resume gets reorganized and rewritten to fit.";
+    }
+  });
+
+  async function tailorResume(resume, jd){
+    const userMsg = `ORIGINAL RESUME:\n${resume}\n\nJOB DESCRIPTION:\n${jd}\n\nTailor this resume to this job description, following every rule in your instructions.`;
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: "user", content: userMsg }]
+      })
+    });
+    if (!response.ok){
+      throw new Error("The tailoring request failed (status " + response.status + "). Please try again.");
+    }
+    const data = await response.json();
+    const textBlock = (data.content || []).find(b => b.type === "text");
+    if (!textBlock || !textBlock.text){
+      throw new Error("No result came back. Please try again.");
+    }
+    let out = textBlock.text.trim();
+    out = out.replace(/—/g, " - ").replace(/–/g, "-");
+    return out;
+  }
+
+  // ---- Preview rendering ----
+  const HEADER_WHITELIST = new Set([
+    "SUMMARY","PROFESSIONAL SUMMARY","OBJECTIVE","EXPERIENCE","WORK EXPERIENCE",
+    "PROFESSIONAL EXPERIENCE","EMPLOYMENT HISTORY","EDUCATION","SKILLS","CORE SKILLS",
+    "TECHNICAL SKILLS","CERTIFICATIONS","PROJECTS","ACTIVITIES","LEADERSHIP",
+    "VOLUNTEER EXPERIENCE","VOLUNTEER","AWARDS","HONORS","ADDITIONAL INFORMATION",
+    "LANGUAGES","INTERESTS","PUBLICATIONS","REFERENCES"
+  ]);
+
+  function isHeaderLine(line){
+    const clean = line.trim().replace(/:$/,"");
+    if (!clean) return false;
+    if (HEADER_WHITELIST.has(clean.toUpperCase())) return true;
+    if (clean.length < 40 && clean === clean.toUpperCase() && /[A-Z]/.test(clean)) return true;
+    return false;
+  }
+
+  function renderPreview(text){
+    const lines = text.split("\n");
+    let html = "";
+    let started = false;
+    let inList = false;
+
+    lines.forEach((raw, idx)=>{
+      const line = raw.trim();
+      if (idx === 0 && line){
+        html += `<div class="rp-name">${escapeHtml(line)}</div>`;
+        return;
+      }
+      if (idx === 1 && line){
+        html += `<div class="rp-contact">${escapeHtml(line)}</div>`;
+        started = true;
+        return;
+      }
+      if (!line){
+        if (inList){ html += "</ul>"; inList = false; }
+        return;
+      }
+      if (isHeaderLine(line)){
+        if (inList){ html += "</ul>"; inList = false; }
+        html += `<h3>${escapeHtml(line.replace(/:$/,""))}</h3>`;
+        return;
+      }
+      const bulletMatch = line.match(/^[-•*]\s*(.*)/);
+      if (bulletMatch){
+        if (!inList){ html += "<ul>"; inList = true; }
+        html += `<li>${escapeHtml(bulletMatch[1])}</li>`;
+      } else {
+        if (inList){ html += "</ul>"; inList = false; }
+        html += `<p>${escapeHtml(line)}</p>`;
+      }
+    });
+    if (inList) html += "</ul>";
+    resumePreview.innerHTML = html;
+  }
+
+  // ---- View toggle ----
+  const viewPreviewBtn = $("viewPreviewBtn");
+  const viewEditBtn = $("viewEditBtn");
+  const previewWrap = $("previewWrap");
+  const editWrap = $("editWrap");
+
+  viewPreviewBtn.addEventListener("click", ()=>{
+    renderPreview(resultText.value);
+    previewWrap.style.display = "block";
+    editWrap.style.display = "none";
+    viewPreviewBtn.classList.add("active");
+    viewEditBtn.classList.remove("active");
+  });
+  viewEditBtn.addEventListener("click", ()=>{
+    previewWrap.style.display = "none";
+    editWrap.style.display = "block";
+    viewEditBtn.classList.add("active");
+    viewPreviewBtn.classList.remove("active");
+  });
+  resultText.addEventListener("input", ()=>{
+    if (previewWrap.style.display !== "none") renderPreview(resultText.value);
+  });
+
+  // ---- Copy ----
+  $("copyBtn").addEventListener("click", async ()=>{
+    try{
+      await navigator.clipboard.writeText(resultText.value);
+      const btn = $("copyBtn");
+      const original = btn.textContent;
+      btn.textContent = "Copied";
+      setTimeout(()=> btn.textContent = original, 1400);
+    }catch(e){
+      showError("Couldn't copy automatically. Select the text in Edit view and copy it manually.");
+    }
+  });
+
+  // ---- PDF export ----
+  $("downloadPdfBtn").addEventListener("click", ()=>{
+    try{
+      generatePdf(resultText.value);
+    }catch(e){
+      showError("Couldn't build the PDF. Try again, or copy the text and paste it into a document.");
+    }
+  });
+
+  function generatePdf(text){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: "pt", format: "letter" });
+    const marginX = 54, marginTop = 58, marginBottom = 54;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const usableWidth = pageWidth - marginX * 2;
+    const bodyLineHeight = 13.5;
+    let y = marginTop;
+
+    function checkBreak(needed){
+      if (y + needed > pageHeight - marginBottom){
+        doc.addPage();
+        y = marginTop;
+      }
+    }
+
+    const lines = text.split("\n");
+    lines.forEach((raw, idx)=>{
+      const line = raw.trim();
+
+      if (idx === 0 && line){
+        doc.setFont("helvetica","bold"); doc.setFontSize(18); doc.setTextColor(20,20,20);
+        checkBreak(24);
+        doc.text(line, marginX, y);
+        y += 22;
+        return;
+      }
+      if (idx === 1 && line){
+        doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(90,90,90);
+        checkBreak(16);
+        doc.text(line, marginX, y);
+        y += 20;
+        doc.setTextColor(20,20,20);
+        return;
+      }
+      if (!line){ y += 6; return; }
+
+      if (isHeaderLine(line)){
+        y += 6;
+        checkBreak(20);
+        doc.setFont("helvetica","bold"); doc.setFontSize(11);
+        doc.setTextColor(126,36,31);
+        doc.text(line.replace(/:$/,"").toUpperCase(), marginX, y);
+        doc.setDrawColor(210,200,180);
+        doc.line(marginX, y + 3, pageWidth - marginX, y + 3);
+        y += 15;
+        doc.setTextColor(20,20,20);
+        return;
+      }
+
+      doc.setFont("helvetica","normal"); doc.setFontSize(10);
+      const bulletMatch = line.match(/^[-•*]\s*(.*)/);
+      const indent = bulletMatch ? 14 : 0;
+      const content = bulletMatch ? ("\u2022  " + bulletMatch[1]) : line;
+      const wrapped = doc.splitTextToSize(content, usableWidth - indent);
+      wrapped.forEach(wLine=>{
+        checkBreak(bodyLineHeight);
+        doc.text(wLine, marginX + indent, y);
+        y += bodyLineHeight;
+      });
+    });
+
+    doc.save("tailored-resume.pdf");
+  }
+</script>
+</body>
+</html>
