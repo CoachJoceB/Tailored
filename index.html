@@ -441,7 +441,21 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  let pdfWorkerReady = null;
+  function ensurePdfWorker(){
+    if (pdfWorkerReady) return pdfWorkerReady;
+    pdfWorkerReady = fetch("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js")
+      .then(resp => resp.text())
+      .then(code => {
+        const blob = new Blob([code], { type: "application/javascript" });
+        pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(blob);
+      })
+      .catch(() => {
+        // Fall back to running without a dedicated worker rather than surfacing an error.
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "";
+      });
+    return pdfWorkerReady;
+  }
 
   const $ = (id) => document.getElementById(id);
   const errorBox = $("errorBox");
@@ -515,6 +529,7 @@
       const result = await mammoth.extractRawText({arrayBuffer});
       return result.value;
     } else if (name.endsWith(".pdf")){
+      await ensurePdfWorker();
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
       let text = "";
